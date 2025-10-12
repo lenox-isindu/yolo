@@ -11,7 +11,7 @@ services:
       - GENZ
 
   backend:
-    image: dockerbackend:v0.0.1  
+    image: dockerbackend:v0.0.3 
     container_name: backend_cont
     depends_on:
       - mongo
