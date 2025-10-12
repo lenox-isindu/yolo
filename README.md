@@ -7,3 +7,13 @@ Install the docker engine here:
 - [Docker](https://docs.docker.com/engine/install/) 
 
 ## 
+RUN THE FRONTENd
+npm run build
+serve -s build
+
+BACKEND
+
+npm start
+
+DOCKER COMPOSE
+docker compose up
