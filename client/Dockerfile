@@ -1,28 +1,19 @@
-# Use an official Node runtime as a parent image
-FROM node:14-slim AS build
+# Used Node 14 Alpine for  compatibility because i tried 18 and there were issues with compatibility with react
+FROM node:14-alpine AS build
 
-# Set the working directory in the container
-WORKDIR /usr/src/app
-
-# Copy the package.json and package-lock.json files to the container
-COPY package*.json ./
-
-# Install application dependencies
-RUN npm install
-
-# Copy the rest of the application code to the container
-COPY . .
-
-FROM alpine:3.16.7
-
+# Set working directory
 WORKDIR /app
 
-RUN apk update && apk add npm
+# Copy package files 
+COPY package*.json ./
+# install dependencies
+RUN npm install
 
-COPY --from=build /usr/src/app /app
+# Copy the rest of the application code
+COPY . .
 
-# Expose the port the app runs on
+# Expose port 3000
 EXPOSE 3000
 
-# Define the command to run your app
+# Run the app
 CMD ["npm", "start"]
