@@ -1,4 +1,3 @@
-
 services:
   mongo:
     image: mongo:latest
@@ -11,19 +10,19 @@ services:
       - GENZ
 
   backend:
-    image: dockerbackend:v0.0.3 
+    image: lenoxisindu/backend:v0.0.3
     container_name: backend_cont
     depends_on:
       - mongo
     env_file:
-      - ./backend/.env  
+      - ./backend/.env
     ports:
       - "5000:5000"
     networks:
       - GENZ
 
   frontend:
-    image: yolo-frontend:v1.0.1  
+    image: lenoxisindu/frontend:v1.0.1
     container_name: frontend_cont
     depends_on:
       - backend
@@ -38,4 +37,3 @@ networks:
 
 volumes:
   finance_bill:
-    
