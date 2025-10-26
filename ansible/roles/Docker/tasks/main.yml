@@ -1,0 +1,50 @@
+---
+# roles/docker/tasks/main.yml
+# Install Docker, Docker Compose, and create the custom network
+
+- block:
+    - name: Install dependencies
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+        state: present
+        update_cache: yes
+
+    - name: Add Docker GPG key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker repo
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu focal stable
+        state: present
+
+    - name: Install Docker Engine
+      apt:
+        name: docker-ce
+        state: present
+        update_cache: yes
+
+    - name: Install Docker Compose
+      get_url:
+        url: https://github.com/docker/compose/releases/download/v2.6.0/docker-compose-`uname -s`-`uname -m`
+        dest: /usr/local/bin/docker-compose
+        mode: '0755'
+
+    - name: Ensure Docker is running
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Create GENZ Docker network
+      command: docker network create {{ app_network }}
+      register: create_network
+      failed_when: create_network.rc != 0 and "already exists" not in create_network.stderr
+      changed_when: "'already exists' not in create_network.stderr"
+  tags:
+    - docker

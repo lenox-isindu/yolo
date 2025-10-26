@@ -1,0 +1,15 @@
+---
+# Role: Frontend container setup
+
+- name: Run Frontend container
+  community.docker.docker_container:
+    name: "{{ frontend_container }}"
+    image: "{{ frontend_image }}"
+    depends_on:
+      - "{{ backend_container }}"
+    ports:
+      - "{{ frontend_port }}"
+    networks:
+      - name: "{{ network_name }}"
+    restart_policy: always
+  tags: frontend

@@ -1,0 +1,15 @@
+---
+# Role: MongoDB setup
+
+- name: Run MongoDB container
+  community.docker.docker_container:
+    name: "{{ mongo_container }}"
+    image: "{{ mongo_image }}"
+    ports:
+      - "{{ mongo_port }}"
+    volumes:
+      - "{{ volume_name }}:/data/db"
+    networks:
+      - name: "{{ network_name }}"
+    restart_policy: always
+  tags: mongo

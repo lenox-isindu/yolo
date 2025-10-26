@@ -1,0 +1,28 @@
+---
+# vars/main.yml - Variables for the deployment playbook
+
+# GitHub repository
+github_repo: "git@github.com:lenox-isindu/yolo.git"
+
+# Local path to clone the project
+project_path: "/home/vagrant/yolo_project"
+
+# Docker network and volume names
+network_name: "GENZ"
+volume_name: "finance_bill"
+
+# MongoDB container setup
+mongo_image: "mongo:latest"
+mongo_container: "mongo_db"
+mongo_port: "27018:27017"
+
+# Backend container setup
+backend_image: "lenoxisindu/backend:v0.0.3"
+backend_container: "backend_cont"
+backend_port: "5000:5000"
+backend_env_file: "{{ project_path }}/backend/.env"
+
+# Frontend container setup
+frontend_image: "lenoxisindu/frontend:v1.0.1"
+frontend_container: "frontend_cont"
+frontend_port: "3000:3000"

@@ -1,0 +1,16 @@
+---
+# Role: Backend container setup
+
+- name: Run Backend container
+  community.docker.docker_container:
+    name: "{{ backend_container }}"
+    image: "{{ backend_image }}"
+    depends_on:
+      - "{{ mongo_container }}"
+    env_file: "{{ backend_env_file }}"
+    ports:
+      - "{{ backend_port }}"
+    networks:
+      - name: "{{ network_name }}"
+    restart_policy: always
+  tags: backend

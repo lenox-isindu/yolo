@@ -1,0 +1,68 @@
+---
+# yolo.yml - Main Ansible Playbook for E-commerce App Deployment
+# This playbook automates the setup of your MongoDB, Backend, and Frontend containers.
+
+- name: Deploy E-commerce Web Application
+  hosts: all
+  become: true
+  vars_files:
+    - vars/main.yml
+
+  tasks:
+    - name: Ensure Docker is installed
+      tags: docker
+      block:
+        - name: Update apt packages
+          apt:
+            update_cache: yes
+          become: true
+
+        - name: Install Docker and required packages
+          apt:
+            name:
+              - docker.io
+              - docker-compose
+              - git
+            state: present
+
+        - name: Start and enable Docker service
+          service:
+            name: docker
+            state: started
+            enabled: yes
+      rescue:
+        - name: Print error message if Docker installation fails
+          debug:
+            msg: "Docker installation failed. Please check system logs."
+
+    - name: Clone project repository from GitHub
+      tags: git
+      git:
+        repo: "{{ github_repo }}"
+        dest: "{{ project_path }}"
+        version: main
+        force: yes
+
+    - name: Create Docker network and volume
+      tags: setup
+      block:
+        - name: Create custom Docker network (GENZ)
+          community.docker.docker_network:
+            name: "{{ network_name }}"
+            driver: bridge
+
+        - name: Create Docker volume for MongoDB (finance_bill)
+          community.docker.docker_volume:
+            name: "{{ volume_name }}"
+      rescue:
+        - name: Print error message if Docker setup fails
+          debug:
+            msg: "Network or volume creation failed."
+
+  roles:
+    - role: mongo
+      tags: mongo
+    - role: backend
+      tags: backend
+    - role: frontend
+      tags: frontend
