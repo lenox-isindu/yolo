@@ -1,70 +1,103 @@
 ---
-# tasks file for docker role
 
-- name: Update apt packages
+- name: Update apt cache # this will update the cache
   apt:
     update_cache: yes
-    upgrade: yes
+    cache_valid_time: 3600 # this is just a timeframe i have set 1 hour for the caache to be valid
 
-- name: Install required dependencies
+- name: Install required packages for Docker # this will install the required packages for docker installation
   apt:
     name:
-      - apt-transport-https
-      - ca-certificates
+      - apt-transport-https # this will allow apt to use https
+      - ca-certificates # this will allow apt to use certificates for https -generaly alot of thingg arround instalation
       - curl
-      - software-properties-common
       - gnupg
+      - lsb-release # this will provide info about the linux distribution
+      - software-properties-common
     state: present
-    update_cache: yes
+    update_cache: yes # update the cache before installing
 
-- name: Add Docker’s official GPG key
+- name: Add Docker's official GPG key # this will add docker gpg key to verify the packages from docker repo
   apt_key:
     url: https://download.docker.com/linux/ubuntu/gpg
     state: present
 
-- name: Add Docker repository
+- name: Add Docker apt repository # this will add docker repo to apt sources
   apt_repository:
     repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
     state: present
     filename: docker
 
-- name: Update apt after adding Docker repo
+- name: Update apt after adding Docker repo # this will update the apt cache after adding docker repo
   apt:
     update_cache: yes
 
-- name: Install Docker and Docker Compose (latest)
+- name: Install Docker Engine, CLI and containerd # this will install docker engine and other required packages
   apt:
     name:
       - docker-ce
       - docker-ce-cli
       - containerd.io
+      - docker-buildx-plugin
       - docker-compose-plugin
     state: latest
     update_cache: yes
 
-- name: Ensure Docker service is enabled and running
+- name: Ensure Docker service is started and enabled # this will ensure docker service is running and enabled on boot
   service:
     name: docker
     state: started
     enabled: yes
 
-- name: Add vagrant user to docker group
+- name: Ensure 'docker' group exists # this will ensure docker group exists
+  group:
+    name: docker
+    state: present
+
+- name: Add Ansible user to docker group (defaults to vagrant) # this will add the ansible user to docker group to avoid using sudo for docker commands as vagrant has it default as vagrant
   user:
-    name: vagrant
+    name: "{{ ansible_user | default('vagrant') }}" # default user is vagrant and this will ensure complete automation no braking after clone
     groups: docker
     append: yes
 
-- name: Verify Docker installation
-  command: docker --version
-  register: docker_version_check
-  changed_when: false
-  failed_when: docker_version_check.rc != 0
+# Ensure Docker data directory exists and has correct ownership & perms(did get some help online but i think i was worth it)
+- name: Ensure /var/lib/docker exists with proper ownership and permissions
+  file:
+    path: /var/lib/docker
+    state: directory
+    owner: root
+    group: docker
+    mode: "0750"
 
-- name: Verify Docker Compose installation
-  command: docker compose version
-  register: docker_compose_check
-  changed_when: false
-  failed_when: docker_compose_check.rc != 0
+# Restart docker to make sure permissions & group changes apply
+- name: Restart Docker to apply changes
+  service:
+    name: docker
+    state: restarted # this stage will greatly help in the case the user was not set well so it will have to refresh to get the new settings
 
-  tags:
-    - docker
+# Verify Docker is responding(here i alo got some help online and i think its just a good practice to verify installation)
+- name: Verify Docker CLI works
+  command: docker info
+  register: docker_info
+  changed_when: false
+  failed_when: docker_info.rc != 0
+
+- name: Debug Docker verification
+  debug:
+    msg: "Docker verified: {{ (docker_info.stdout_lines | default([]))[:5] }}" # good for the error logs
+
+# Ensure Docker network and volume exist (so i thought of puting this a s a task in the main file but i agin thought it would be  be better to put all docker staff together)
+- name: Create custom Docker network (GENZ by default)
+  community.docker.docker_network:
+    name: "{{ network_name | default('GENZ') }}" # default network name is GENZ as it is is in our vars file so it will be created 
+    driver: bridge
+    state: present
+
+- name: Create Docker volume for MongoDB (finance_bill by default)
+  community.docker.docker_volume:
+    name: "{{ volume_name | default('finance_bill') }}"
+    state: present
+
+- name: Confirm Docker environment setup completed
+  debug:
+    msg: "Docker role finished: Docker installed, perms fixed, network '{{ network_name | default('GENZ') }}' and volume '{{ volume_name | default('finance_bill') }}' present."

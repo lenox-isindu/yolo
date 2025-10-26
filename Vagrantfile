@@ -8,6 +8,7 @@ Vagrant.configure("2") do |config|
   # Network (for accessing web app via browser)
   config.vm.network "forwarded_port", guest: 80, host: 8080
   config.vm.network "forwarded_port", guest: 3000, host: 3000
+  config.vm.network "forwarded_port", guest: 5000, host: 5000
 
   # Sync your project directory
   config.vm.synced_folder ".", "/vagrant"

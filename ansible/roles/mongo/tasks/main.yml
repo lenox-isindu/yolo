@@ -1,10 +1,8 @@
 ---
-# Role: MongoDB setup
-
 - name: Run MongoDB container
   community.docker.docker_container:
     name: "{{ mongo_container }}"
-    image: "{{ mongo_image }}"
+    image: "{{ mongo_image }}" # this i have already defined it in the vars task
     ports:
       - "{{ mongo_port }}"
     volumes:
@@ -12,4 +10,4 @@
     networks:
       - name: "{{ network_name }}"
     restart_policy: always
-  tags: mongo
+  tags: mongo # mongo tag to identify this task in my main playbook

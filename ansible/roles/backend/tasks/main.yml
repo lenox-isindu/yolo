@@ -1,16 +1,53 @@
 ---
-# Role: Backend container setup
+- name: Check if MongoDB container is running # this will check if mongo container is up and running before starting backend container because as i did in docker compose it depends on it
+  community.docker.docker_container_info:
+    name: "{{ mongo_container }}"
+  register: mongo_status
+  failed_when: mongo_status is failed
+  changed_when: false
 
+- name: Wait for MongoDB container to be ready # this will wait until mongo container is fully up and running
+  community.docker.docker_container_info:
+    name: "{{ mongo_container }}"
+  register: mongo_health
+  retries: 10 # retry 10 times but i think it will be enough to get mongo up
+  delay: 5 # wait 5 seconds between retries
+  until: mongo_health.container.State.Running is defined and mongo_health.container.State.Running
+  changed_when: false
+
+#  Ensure backend directory exists (this i just included it during the time i have been testing the containers individualy  because i had not yet cloned the app though the  main playbook)
+- name: Ensure backend directory exists
+  file:
+    path: "{{ project_path }}/backend"
+    state: directory
+    owner: vagrant
+    group: vagrant
+    mode: "0755"
+
+# Ensure backend .env file exists(this i just included it during the time i have been testing the containers individualy  because i had not yet cloned the app though the  main playbook)
+- name: Ensure backend .env file exists
+  copy:
+    dest: "{{ project_path }}/backend/.env"
+    content: |
+      MONGO_URI=mongodb://{{ mongo_container }}:27017/finance_bill
+      PORT=5000
+      JWT_SECRET=secret123
+      NODE_ENV=production
+    owner: vagrant
+    group: vagrant
+    mode: "0644"
+  when: not lookup('ansible.builtin.file', project_path + '/backend/.env', errors='ignore')
+
+#  Run Backend container
 - name: Run Backend container
   community.docker.docker_container:
     name: "{{ backend_container }}"
     image: "{{ backend_image }}"
-    depends_on:
-      - "{{ mongo_container }}"
-    env_file: "{{ backend_env_file }}"
-    ports:
+    env_file: "{{ project_path }}/backend/.env"
+    published_ports:
       - "{{ backend_port }}"
     networks:
       - name: "{{ network_name }}"
     restart_policy: always
+    state: started
   tags: backend

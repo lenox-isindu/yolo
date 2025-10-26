@@ -1,28 +1,27 @@
 ---
-# vars/main.yml - Variables for the deployment playbook
 
 # GitHub repository
-github_repo: "git@github.com:lenox-isindu/yolo.git"
+github_repo: "https://github.com/lenox-isindu/yolo.git"
 
-# Local path to clone the project
+# Local path to clone the project thi is now on the vm
 project_path: "/home/vagrant/yolo_project"
 
-# Docker network and volume names
+# Docker network and volume names this i have done and named them as in the previous ip
 network_name: "GENZ"
 volume_name: "finance_bill"
 
-# MongoDB container setup
+# MongoDB container setup as i did in ip2
 mongo_image: "mongo:latest"
 mongo_container: "mongo_db"
 mongo_port: "27018:27017"
 
-# Backend container setup
+# Backend container setup also as in ip2
 backend_image: "lenoxisindu/backend:v0.0.3"
 backend_container: "backend_cont"
-backend_port: "5000:5000"
-backend_env_file: "{{ project_path }}/backend/.env"
+backend_port: "5000:5000" # Exposing port 5000 in the host machine so i can access the feed there
+backend_env_file: "{{ project_path }}/backend/.env" # my path to backend .env file
 
-# Frontend container setup
+# Frontend container setup as in ip2
 frontend_image: "lenoxisindu/frontend:v1.0.1"
 frontend_container: "frontend_cont"
-frontend_port: "3000:3000"
+frontend_port: "3000:3000" # Exposing port 3000 in the host machine so i can access the react app there

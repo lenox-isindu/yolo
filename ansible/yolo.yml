@@ -11,34 +11,19 @@
       git:
         repo: "{{ github_repo }}"
         dest: "{{ project_path }}"
-        version: main
+        version: master
         force: yes
 
-    - name: Create Docker network and volume
-      tags: setup
-      block:
-        - name: Create custom Docker network (GENZ)
-          community.docker.docker_network:
-            name: "{{ network_name }}"
-            driver: bridge
-
-        - name: Create Docker volume for MongoDB (finance_bill)
-          community.docker.docker_volume:
-            name: "{{ volume_name }}"
-      rescue:
-        - name: Print error message if Docker setup fails
-          debug:
-            msg: "Network or volume creation failed."
-
+   
   roles:
-    - role: docker     # Installs and verifies Docker + Compose
+    - role: docker     # this will Install and verifies Docker + Compose
       tags: docker
 
-    - role: mongo      #  Deploys MongoDB container
+    - role: mongo      # MongoDB container
       tags: mongo
 
-    - role: backend    # Deploys backend container
+    - role: backend    # backend container
       tags: backend
 
-    - role: frontend   # Deploys frontend container
+    - role: frontend   # frontend container
       tags: frontend
