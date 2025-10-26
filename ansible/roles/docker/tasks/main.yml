@@ -1,50 +1,70 @@
 ---
-# roles/docker/tasks/main.yml
-# Install Docker, Docker Compose, and create the custom network
+# tasks file for docker role
 
-- block:
-    - name: Install dependencies
-      apt:
-        name:
-          - apt-transport-https
-          - ca-certificates
-          - curl
-          - software-properties-common
-        state: present
-        update_cache: yes
+- name: Update apt packages
+  apt:
+    update_cache: yes
+    upgrade: yes
 
-    - name: Add Docker GPG key
-      apt_key:
-        url: https://download.docker.com/linux/ubuntu/gpg
-        state: present
+- name: Install required dependencies
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+      - gnupg
+    state: present
+    update_cache: yes
 
-    - name: Add Docker repo
-      apt_repository:
-        repo: deb https://download.docker.com/linux/ubuntu focal stable
-        state: present
+- name: Add Docker’s official GPG key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
 
-    - name: Install Docker Engine
-      apt:
-        name: docker-ce
-        state: present
-        update_cache: yes
+- name: Add Docker repository
+  apt_repository:
+    repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+    state: present
+    filename: docker
 
-    - name: Install Docker Compose
-      get_url:
-        url: https://github.com/docker/compose/releases/download/v2.6.0/docker-compose-`uname -s`-`uname -m`
-        dest: /usr/local/bin/docker-compose
-        mode: '0755'
+- name: Update apt after adding Docker repo
+  apt:
+    update_cache: yes
 
-    - name: Ensure Docker is running
-      service:
-        name: docker
-        state: started
-        enabled: yes
+- name: Install Docker and Docker Compose (latest)
+  apt:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-compose-plugin
+    state: latest
+    update_cache: yes
 
-    - name: Create GENZ Docker network
-      command: docker network create {{ app_network }}
-      register: create_network
-      failed_when: create_network.rc != 0 and "already exists" not in create_network.stderr
-      changed_when: "'already exists' not in create_network.stderr"
+- name: Ensure Docker service is enabled and running
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: Add vagrant user to docker group
+  user:
+    name: vagrant
+    groups: docker
+    append: yes
+
+- name: Verify Docker installation
+  command: docker --version
+  register: docker_version_check
+  changed_when: false
+  failed_when: docker_version_check.rc != 0
+
+- name: Verify Docker Compose installation
+  command: docker compose version
+  register: docker_compose_check
+  changed_when: false
+  failed_when: docker_compose_check.rc != 0
+
   tags:
     - docker
