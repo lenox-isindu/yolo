@@ -1,0 +1,1 @@
+aws and gcp still not acceptying cars so no cloud platform to impliment teraform

@@ -6,7 +6,7 @@ import ProductDetail from './ProductDetail';
 import AddProduct from './AddProduct';
 import EditProductForm from './EditProductForm';
 
-// ✅ Smart API base URL handling
+
 const API_URL =
   window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
     ? "http://localhost:5000/api" // for when you're running frontend from your host browser
@@ -24,7 +24,7 @@ class ProductControl extends Component {
     };
   }
 
-  // ✅ Fetch all products on load
+  //  Fetch all products on load
   componentDidMount() {
     axios
       .get(`${API_URL}/products`)
@@ -34,7 +34,7 @@ class ProductControl extends Component {
           actualProductList: res.data,
         });
       })
-      .catch((err) => console.error('❌ Error fetching products:', err));
+      .catch((err) => console.error(' Error fetching products:', err));
   }
 
   handleEditProductClick = () => {
@@ -69,20 +69,20 @@ class ProductControl extends Component {
     }
   };
 
-  // ✅ Add a new product
+  //  Add a new product
   handleAddingNewProduct = (newProduct) => {
     axios
       .post(`${API_URL}/products`, newProduct)
       .then((res) => {
-        console.log('✅ Product added:', res.data);
+        console.log(' Product added:', res.data);
         this.setState({
           formVisibleOnPage: false,
         });
       })
-      .catch((err) => console.error('❌ Error adding product:', err));
+      .catch((err) => console.error(' Error adding product:', err));
   };
 
-  // ✅ Delete a product
+  // Delete a product
   handleDeletingProduct = (id) => {
     axios
       .delete(`${API_URL}/products/${id}`)
@@ -96,10 +96,10 @@ class ProductControl extends Component {
           selectedProduct: null,
         });
       })
-      .catch((err) => console.error('❌ Error deleting product:', err));
+      .catch((err) => console.error(' Error deleting product:', err));
   };
 
-  // ✅ Select product for detail view
+  // Select product for detail view
   handleChangingSelectedProduct = (id) => {
     const selectedProduct = this.state.actualProductList.find(
       (product) => product._id === id
