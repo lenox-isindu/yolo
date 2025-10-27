@@ -39,3 +39,10 @@
 
 Everything is now fully containerized, versioned, persistent a single `docker-compose.yml`.
 
+  
+
+  ssh-keygen -f "/home/moringa/.ssh/known_hosts" -R "[127.0.0.1]:2222"
+
+
+sudo modprobe -r kvm_intel kvm
+

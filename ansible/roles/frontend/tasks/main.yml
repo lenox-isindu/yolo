@@ -1,11 +1,9 @@
----
-
-- name: Ensure Docker network exists # it ensure the network exists before running the frontend container
+- name: Ensure Docker network exists
   community.docker.docker_network:
     name: "{{ network_name }}"
   tags: frontend
 
-- name: Run Frontend container # this will run my frontend container
+- name: Run Frontend container
   community.docker.docker_container:
     name: "{{ frontend_container }}"
     image: "{{ frontend_image }}"
@@ -14,7 +12,8 @@
     networks:
       - name: "{{ network_name }}"
     env:
-      REACT_APP_API_URL: "http://{{ backend_container }}:{{ backend_internal_port | default('5000') }}" # this sets the backend URL for the frontend to communicate with the backend container
+      REACT_APP_API_URL: "http://backend_cont:5000"
+      HOST: "0.0.0.0"
     restart_policy: always
     state: started
   tags: frontend

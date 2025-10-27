@@ -22,7 +22,7 @@ services:
       - GENZ
 
   frontend:
-    image: lenoxisindu/frontend:v1.0.1
+    image: lenoxisindu/frontend:v1.0.2
     container_name: frontend_cont
     depends_on:
       - backend

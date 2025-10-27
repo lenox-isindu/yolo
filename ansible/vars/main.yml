@@ -13,7 +13,7 @@ volume_name: "finance_bill"
 # MongoDB container setup as i did in ip2
 mongo_image: "mongo:latest"
 mongo_container: "mongo_db"
-mongo_port: "27018:27017"
+mongo_port: "27017:27017"
 
 # Backend container setup also as in ip2
 backend_image: "lenoxisindu/backend:v0.0.3"
@@ -22,6 +22,6 @@ backend_port: "5000:5000" # Exposing port 5000 in the host machine so i can acce
 backend_env_file: "{{ project_path }}/backend/.env" # my path to backend .env file
 
 # Frontend container setup as in ip2
-frontend_image: "lenoxisindu/frontend:v1.0.1"
+frontend_image: "lenoxisindu/frontend:v1.0.4"
 frontend_container: "frontend_cont"
 frontend_port: "3000:3000" # Exposing port 3000 in the host machine so i can access the react app there
