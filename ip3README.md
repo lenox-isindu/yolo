@@ -35,7 +35,7 @@ MONGODB_URI=mongodb://mongo:27017/yolomy
 PORT=5000
 but no wories as if yo fail to add the container will handlee that gracefully
 
-3 run the playbook to provision services= ansible-playbook ansible/yolo.yml
+3 run the playbook to provision services= ansible-playbook ansible/playbook.yml
 
 visit localhost:300  for frontend that is if it is free on your host machine if noty edit that in the vagrantfile and forward to another free port same to backend
 
