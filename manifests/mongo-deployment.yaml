@@ -1,0 +1,49 @@
+
+# DEPLOYMENT sECTION -this basicaly states that im using a k8s resource caled deployment and i have configured it
+apiVersion: apps/v1              
+kind: Deployment                  
+metadata:
+  name: mongo                     
+  labels:
+    app: mongo          # this will help me  identify and group resources
+
+spec:
+  replicas:        # i only one instance of that just 1 pod to be created
+  selector:
+    matchLabels:
+      app: mongo           # my Deployment will now manage pods with this label
+
+  template:     #this now basicaly defines how  the pods will look like
+    metadata:
+      labels:
+        app: mongo                
+
+    spec:
+      containers:                 # the list of containers inside the pod
+        - name: mongo             
+          image: mongo:latest   # ill use the latest mongo image from docker hub
+          ports:
+            - containerPort: 27017  # this will expose my port for mongo db 
+
+          volumeMounts:      # this wil allow me to mount persistent storage inside the container
+            - name: mongo-storage  
+              mountPath: /data/db 
+      volumes:                   
+        - name: mongo-storage     ]
+          persistentVolumeClaim:
+            claimName: mongo-pvc  #this refers to the volumeclaim i have defined 
+
+---
+
+#  PERSISTENT VOLUME 
+apiVersion: v1                    
+kind: PersistentVolumeClaim       
+metadata:
+  name: mongo-pvc                
+
+spec:
+  accessModes:
+    - ReadWriteOnce       # read and write permissions for a single node
+  resources:
+    requests:
+      storage: 1Gi # storage size 
