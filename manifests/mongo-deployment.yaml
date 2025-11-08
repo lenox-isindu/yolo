@@ -26,10 +26,10 @@ spec:
             - containerPort: 27017  # this will expose my port for mongo db 
 
           volumeMounts:      # this wil allow me to mount persistent storage inside the container
-            - name: mongo-storage  
+            - name: mongo-storage
               mountPath: /data/db 
       volumes:                   
-        - name: mongo-storage     ]
+        - name: mongo-storage
           persistentVolumeClaim:
             claimName: mongo-pvc  #this refers to the volumeclaim i have defined 
 

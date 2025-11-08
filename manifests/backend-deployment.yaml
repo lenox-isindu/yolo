@@ -1,0 +1,52 @@
+# BACKED DEPLOYMENT
+apiVersion: apps/v1            
+kind: Deployment        # this the type of resource 
+metadata:
+  name: backend                 
+  labels:
+    app: backend                 
+
+spec:
+  replicas: 1    # the number of pod replicas to create
+  selector:
+    matchLabels:
+      app: backend               
+  template:    # this defines the pod specification 
+    metadata:
+      labels:
+        app: backend            
+
+    spec:
+      containers:                
+        - name: backend          
+          image: lenoxisindu/backend:v0.0.3  # my docker image
+          ports:
+            - containerPort: 5000       # this just exposes port 5000 inside the container
+
+          
+          # Env Variables
+          
+          env:
+            - name: MONGODB_URI             
+              value: "mongodb://mongo:27017/yolomy"   
+            - name: PORT                    
+              value: "5000"                
+---
+
+# BACKEND SERVICE
+apiVersion: v1                  
+kind: Service    # this defines the resource im creating which is a servic for this case
+metadata:
+  name: backend-service          
+
+spec:
+  selector:
+    app: backend          # this Service now will route traffic to pods with this label
+
+  ports:
+    - protocol: TCP     # the  protocol used or chanel
+      port: 5000                 
+      targetPort: 5000           
+
+  type: ClusterIP     # my  Service type:
+                                 
