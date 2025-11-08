@@ -12,14 +12,28 @@ spec:
       app: frontend    # this matches the lebel i gave it
   template:
     metadata:
-      
+      labels:
         app: frontend
     spec:
       containers:
         - name: frontend
-          image: lenoxisindu/frontend:v1.0.2   # my frontend image
+          image: lenoxisindu/frontend:v1.0.4   # my frontend image
           ports:
             - containerPort: 3000     # the port exposed inside the container
           env:
-            - name: REACT_APP_API_URL          # this will route to my backend for comunication
+            - name: REACT_APP_API_URL    # this will route to my backend for comunication
               value: "http://backend-service:5000/api"
+---
+# the Service 
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service     # the name of my service
+spec:
+  selector:
+    app: frontend     # this will target pods with this label
+  ports:
+    - protocol: TCP    # the protocol used fo communicastion
+      port: 3000               
+      targetPort: 3000       
+  type: LoadBalancer            # this will allow browser acces by exposing this frontend container
