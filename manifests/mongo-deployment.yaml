@@ -8,7 +8,7 @@ metadata:
     app: mongo          # this will help me  identify and group resources
 
 spec:
-  replicas:        # i only one instance of that just 1 pod to be created
+  replicas:  1      # i only one instance of that just 1 pod to be created
   selector:
     matchLabels:
       app: mongo           # my Deployment will now manage pods with this label

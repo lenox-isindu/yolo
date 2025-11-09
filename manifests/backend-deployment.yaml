@@ -47,7 +47,7 @@ spec:
     - protocol: TCP     # the  protocol used or chanel
       port: 5000                 
       targetPort: 5000  
-               
+      nodePort: 30001          
 
-  type:  ClusterIP    # my  Service type:
+  type: NodePort     # my  Service type:
                                  
