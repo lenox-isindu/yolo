@@ -28,7 +28,7 @@ spec:
           
           env:
             - name: MONGODB_URI             
-              value: "mongodb://mongo:27017/yolomy"   
+              value: "mongodb://mongo:27017/yolo"   
             - name: PORT                    
               value: "5000"                
 ---
@@ -47,7 +47,7 @@ spec:
     - protocol: TCP     # the  protocol used or chanel
       port: 5000                 
       targetPort: 5000  
-      nodePort: 30001          
+               
 
-  type: NodePort     # my  Service type:
+  type: ClusterIP    # my  Service type:
                                  

@@ -4,9 +4,9 @@ metadata:
   name: mongo
 spec:
   selector:
-    app: mongo         # matches the label in my mongo Deployment
+    app: mongo
   ports:
     - protocol: TCP
-      port: 27017     
+      port: 27017
       targetPort: 27017
-  type: ClusterIP      
+  type: ClusterIP
