@@ -49,5 +49,5 @@ spec:
       targetPort: 5000  
                
 
-  type: ClusterIP    # my  Service type:
+  type: ClusterIP    # my  Service type:/ this i have updated it in eks to use a load balancer for public communication with frontend outside the cluster
                                  
