@@ -46,7 +46,8 @@ spec:
   ports:
     - protocol: TCP     # the  protocol used or chanel
       port: 5000                 
-      targetPort: 5000           
+      targetPort: 5000  
+               
 
-  type: ClusterIP     # my  Service type:
+  type:  ClusterIP    # my  Service type:
                                  

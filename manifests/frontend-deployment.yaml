@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: lenoxisindu/frontend:v1.0.4   # my frontend image
+          image: lenoxisindu/frontend:v1.0.7  # my frontend image
           ports:
             - containerPort: 3000     # the port exposed inside the container
           env:
