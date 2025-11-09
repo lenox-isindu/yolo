@@ -7,12 +7,7 @@ import AddProduct from './AddProduct';
 import EditProductForm from './EditProductForm';
 
 
-const API_URL =
-  window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
-    ? "http://localhost:5000/api"            // Local development
-    : window.location.hostname.includes("backend_cont")
-    ? "http://backend_cont:5000/api"         // Docker container network
-    : "http://192.168.49.2:5000/api"; 
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
 
 class ProductControl extends Component {
   constructor(props) {
